@@ -16,6 +16,7 @@
     }
   ],
   "background": {
-    "scripts": ["scripts/socket.io.js", "scripts/background.js"]
+    "scripts": ["scripts/background.js"],
+    "persistent": false
   }
 }
