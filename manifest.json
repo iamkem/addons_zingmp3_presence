@@ -18,5 +18,14 @@
   "background": {
     "scripts": ["scripts/background.js"],
     "persistent": false
-  }
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "contextMenus",
+    "webRequest",
+    "webRequestBlocking",
+    "https://mp3.zing.vn/*",
+    "https://zingmp3.vn/*"
+  ]
 }
