@@ -1,4 +1,3 @@
-console.log("background script loaded");
 const url = "ws://localhost:8765";
 const baseUrl = "https://mp3.zing.vn/";
 const runTime = browser.runtime;
@@ -63,9 +62,6 @@ function handleMessage(res, sender, sendResponse) {
 }
 
 socket.onopen = function () {
-  console.log("connected");
-  socket.send("Fuck you!");
-
   runTime.onMessage.addListener(handleMessage);
 };
 
