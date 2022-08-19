@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="connected" style="display: none">
+      <div id="connected-header">
+        <i
+          class="fas fa-check-circle"
+          style="font-size: 30px; color: lightgreen; margin-right: 5px"
+        ></i>
+        <h2>Connected</h2>
+      </div>
+      <div id="success-content">
+        <p>ZingPre connected successfully.</p>
+      </div>
+    </div>
+    <div class="disconnected">
+      <div id="disconnected-header">
+        <i
+          class="fas fa-exclamation-circle"
+          style="font-size: 30px; color: yellow; margin-right: 5px"
+        ></i>
+        <h2>Not connected</h2>
+      </div>
+      <div id="error-content">
+        <p>
+          ZingPre was unable to connect to its application. <br />
+          Is it installed or running?
+        </p>
+      </div>
+    </div>
+  </body>
+  <script src="popup.js"></script>
+  <script src="/fonts/fontawesome.js"></script>
+</html>

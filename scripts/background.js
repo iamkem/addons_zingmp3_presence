@@ -4,6 +4,10 @@ const runTime = browser.runtime;
 
 const socket = new WebSocket(url);
 
+let isConnected = false;
+
+const message = { fromBackground: true };
+
 getSongData = (key) => {
   return new Promise((resolve) => {
     const url = `${baseUrl}xhr/media/get-source?type=audio&key=${key}`;
@@ -20,14 +24,15 @@ getSongData = (key) => {
   });
 };
 
-getSongKey = (data) => {
+getSongKeyPath = (data) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(data, "text/html");
 
-  const secretValue =
-    doc.getElementsByClassName("player mt0")[0].attributes["data-xml"].value;
+  const mediaContent =
+      doc.getElementsByClassName("media-content")[0] ??
+      doc.getElementById("zplayerjs-wrapper");
 
-  return secretValue.split("key=")[1];
+  return mediaContent.attributes["data-xml"].value;
 };
 
 crawlSong = (songUrl) => {
@@ -36,7 +41,7 @@ crawlSong = (songUrl) => {
     const req = new XMLHttpRequest();
     req.onload = () => {
       if (req.status === 200) {
-        resolve(getSongKey(req.response));
+        resolve(getSongKeyPath(req.response));
       } else resolve();
     };
     req.open("GET", url);
@@ -44,35 +49,42 @@ crawlSong = (songUrl) => {
   });
 };
 
-function handleMessage(res, sender, sendResponse) {
-  console.log("Incoming:", res);
+function handleToApp(res, sender, sendResponse) {
+  if (isConnected) {
+    console.log("Incoming:", res);
 
-  const { playing, song_url } = res;
+    const { playing, song_url } = res;
 
-  if (!playing) {
-    return socket.send(JSON.stringify(res));
+    if (!playing) {
+      return socket.send(JSON.stringify(res));
+    }
+
+    crawlSong(song_url).then((path) => {
+      if (path.length > 0) res.key_path = path;
+
+      const songData = JSON.stringify(res);
+      socket.send(songData);
+    });
   }
-
-  crawlSong(song_url).then((key) => {
-    if (key.length > 0) res.key = key;
-
-    const songData = JSON.stringify(res);
-    socket.send(songData);
-  });
 }
 
 socket.onopen = function () {
-  runTime.onMessage.addListener(handleMessage);
-};
-
-socket.onmessage = function (msg) {
-  console.log("message:", msg.data);
-};
-
-socket.onerror = function (err) {
-  console.log("connect error:", err.message);
+  console.log("connected");
+  isConnected = true;
 };
 
 socket.onclose = function () {
   console.log("disconnected");
+  isConnected = false;
+
+  runTime.sendMessage({ ...message, msg: { isConnected } });
 };
+
+runTime.onMessage.addListener((msg) => {
+  if (msg.fromContent) {
+    handleToApp(msg.data);
+  }
+  if (msg.fromPopup) {
+    runTime.sendMessage({ ...message, msg: { isConnected } });
+  }
+});

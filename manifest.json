@@ -1,31 +1,42 @@
 {
+  "description": "ZingMp3 Presence Discord",
+  "name": "ZingMp3 Presence",
   "manifest_version": 2,
-  "name": "ZingMp3 RPC",
   "version": "1.0",
 
-  "description": "Adds a red border to all webpages matching mozilla.org.",
-
   "icons": {
-    "48": "icons/border-48.png"
+    "600": "icons/logo600.png"
   },
 
   "content_scripts": [
     {
       "matches": ["*://*.zingmp3.vn/*"],
-      "js": ["app.js"]
+      "js": ["scripts/app.js"]
     }
   ],
+
   "background": {
     "scripts": ["scripts/background.js"],
-    "persistent": false
+    "persistent": true
   },
+
   "permissions": [
     "tabs",
-    "storage",
     "contextMenus",
     "webRequest",
     "webRequestBlocking",
     "https://mp3.zing.vn/*",
     "https://zingmp3.vn/*"
-  ]
+  ],
+
+  "browser_action": {
+    "default_icon": "icons/logo600.png",
+    "theme_icons": [{
+      "light": "icons/logo600.png",
+      "dark": "icons/logo600.png",
+      "size": 32
+    }],
+    "default_title": "ZingMp3 Presence",
+    "default_popup": "popup/index.html"
+  }
 }

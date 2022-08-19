@@ -1,7 +1,7 @@
 const audio = document.querySelector("audio");
 const runTime = browser.runtime;
 
-let message = {};
+const message = { fromContent: true };
 
 function notifyBackgroundPage() {
   runTime.sendMessage(message);
@@ -10,9 +10,11 @@ function notifyBackgroundPage() {
 audio.addEventListener("play", () => {
   const songTitle = document.getElementsByClassName("song-title-item");
   const song_url = songTitle[0].querySelector("a").href.split("zingmp3.vn/")[1];
+  const song_title = songTitle[0].innerText ?? songTitle[0].textContent;
 
-  message = {
+  message.data = {
     playing: true,
+    song_title,
     song_url,
     currentTime: audio.currentTime,
   };
@@ -21,7 +23,7 @@ audio.addEventListener("play", () => {
 });
 
 audio.addEventListener("pause", () => {
-  message = { playing: false };
+  message.data.playing = false;
 
   notifyBackgroundPage();
 });
@@ -29,7 +31,7 @@ audio.addEventListener("pause", () => {
 audio.addEventListener("seeked", () => {
   if (audio.paused) return;
 
-  message.currentTime = audio.currentTime;
+  message.data.currentTime = audio.currentTime;
 
   notifyBackgroundPage();
 });
