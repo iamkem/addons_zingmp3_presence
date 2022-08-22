@@ -2,7 +2,7 @@
   "description": "Your presence zing mp3 on discord",
   "name": "ZingMp3 Presence Discord",
   "manifest_version": 2,
-  "version": "1.1",
+  "version": "1.2",
 
   "icons": {
     "600": "icons/logo600.png"
