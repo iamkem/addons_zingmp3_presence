@@ -2,7 +2,7 @@ const url = "ws://localhost:8765";
 const baseUrl = "https://mp3.zing.vn/";
 const runTime = browser.runtime;
 
-const socket = new WebSocket(url);
+let socket;
 
 let isConnected = false;
 
@@ -29,8 +29,8 @@ getSongKeyPath = (data) => {
   const doc = parser.parseFromString(data, "text/html");
 
   const mediaContent =
-      doc.getElementsByClassName("media-content")[0] ??
-      doc.getElementById("zplayerjs-wrapper");
+    doc.getElementsByClassName("media-content")[0] ??
+    doc.getElementById("zplayerjs-wrapper");
 
   return mediaContent.attributes["data-xml"].value;
 };
@@ -49,7 +49,7 @@ crawlSong = (songUrl) => {
   });
 };
 
-function handleToApp(res, sender, sendResponse) {
+function handleToApp(res, sender, sendToContent) {
   if (isConnected) {
     console.log("Incoming:", res);
 
@@ -68,17 +68,28 @@ function handleToApp(res, sender, sendResponse) {
   }
 }
 
-socket.onopen = function () {
-  console.log("connected");
-  isConnected = true;
-};
+function connect() {
+  socket = new WebSocket(url);
 
-socket.onclose = function () {
-  console.log("disconnected");
-  isConnected = false;
+  console.log("Connecting to", url);
 
-  runTime.sendMessage({ ...message, msg: { isConnected } });
-};
+  socket.onopen = function () {
+    console.log("connected");
+    isConnected = true;
+  };
+
+  socket.onclose = function () {
+    console.log("disconnected...reconnect in seconds");
+    isConnected = false;
+
+    setTimeout(connect, 1000);
+  };
+
+  socket.onerror = function (error) {
+    console.log("connect error:", error);
+    socket.close();
+  };
+}
 
 runTime.onMessage.addListener((msg) => {
   if (msg.fromContent) {
@@ -88,3 +99,5 @@ runTime.onMessage.addListener((msg) => {
     runTime.sendMessage({ ...message, msg: { isConnected } });
   }
 });
+
+connect();

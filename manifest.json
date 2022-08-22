@@ -31,11 +31,13 @@
 
   "browser_action": {
     "default_icon": "icons/logo600.png",
-    "theme_icons": [{
-      "light": "icons/logo600.png",
-      "dark": "icons/logo600.png",
-      "size": 32
-    }],
+    "theme_icons": [
+      {
+        "light": "icons/logo600.png",
+        "dark": "icons/logo600.png",
+        "size": 32
+      }
+    ],
     "default_title": "ZingMp3 Presence",
     "default_popup": "popup/index.html"
   }

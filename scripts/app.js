@@ -3,8 +3,18 @@ const runTime = browser.runtime;
 
 const message = { fromContent: true };
 
+function handleResponse(message) {
+  console.log("from bg:", message);
+}
+
+function handleError(error) {
+  console.log(`Error: ${error.message}`);
+}
+
 function notifyBackgroundPage() {
-  runTime.sendMessage(message);
+  const sending = runTime.sendMessage(message);
+
+  sending.then(handleResponse, handleError);
 }
 
 audio.addEventListener("play", () => {
