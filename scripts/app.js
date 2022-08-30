@@ -3,8 +3,8 @@ const runTime = browser.runtime;
 
 const message = { fromContent: true };
 
-function handleResponse(message) {
-  console.log("from bg:", message);
+function handleResponse(msg) {
+  console.log("from bg:", msg);
 }
 
 function handleError(error) {

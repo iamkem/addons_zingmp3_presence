@@ -8,9 +8,9 @@ let isConnected = false;
 
 const message = { fromBackground: true };
 
-getSongData = (key) => {
+const getSongData = (key) => {
   return new Promise((resolve) => {
-    const url = `${baseUrl}xhr/media/get-source?type=audio&key=${key}`;
+    const _url = `${baseUrl}xhr/media/get-source?type=audio&key=${key}`;
     const req = new XMLHttpRequest();
     req.onload = () => {
       if (req.status === 200) {
@@ -19,12 +19,12 @@ getSongData = (key) => {
         resolve(songData);
       } else resolve();
     };
-    req.open("GET", url);
+    req.open("GET", _url);
     req.send();
   });
 };
 
-getSongKeyPath = (data) => {
+const getSongKeyPath = (data) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(data, "text/html");
 
@@ -35,16 +35,16 @@ getSongKeyPath = (data) => {
   return mediaContent.attributes["data-xml"].value;
 };
 
-crawlSong = (songUrl) => {
+const crawlSong = (songUrl) => {
   return new Promise((resolve) => {
-    const url = `${baseUrl}${songUrl}`;
+    const _url = `${baseUrl}${songUrl}`;
     const req = new XMLHttpRequest();
     req.onload = () => {
       if (req.status === 200) {
         resolve(getSongKeyPath(req.response));
       } else resolve();
     };
-    req.open("GET", url);
+    req.open("GET", _url);
     req.send();
   });
 };
@@ -92,6 +92,8 @@ function connect() {
 }
 
 runTime.onMessage.addListener((msg) => {
+  console.log({ msg });
+
   if (msg.fromContent) {
     handleToApp(msg.data);
   }
