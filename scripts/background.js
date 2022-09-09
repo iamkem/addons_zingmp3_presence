@@ -49,10 +49,10 @@ const crawlSong = (songUrl) => {
   });
 };
 
-function handleToApp(res, sender, sendToContent) {
-  if (isConnected) {
-    console.log("Incoming:", res);
+function handleToApp(res) {
+  console.log(res);
 
+  if (isConnected) {
     const { playing, song_url } = res;
 
     if (!playing) {
@@ -76,6 +76,8 @@ function connect() {
   socket.onopen = function () {
     console.log("connected");
     isConnected = true;
+
+    socket.send(JSON.stringify({ isConnected }));
   };
 
   socket.onclose = function () {
@@ -92,11 +94,10 @@ function connect() {
 }
 
 runTime.onMessage.addListener((msg) => {
-  console.log({ msg });
-
   if (msg.fromContent) {
     handleToApp(msg.data);
   }
+
   if (msg.fromPopup) {
     runTime.sendMessage({ ...message, msg: { isConnected } });
   }
